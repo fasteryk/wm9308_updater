@@ -1,0 +1,33 @@
+#!/usr/bin/expect --
+
+log_user 1
+
+set remote_ip   192.168.10.210
+
+spawn -noecho telnet $remote_ip
+
+while {1} {
+	expect  {
+		"login:"    { send "root\r" }
+		"assword:"  { send "123456\r" }
+		"\\$"       { break }
+		timeout		{ exit -1 }
+        eof 		{ exit -1 }
+    }
+}
+
+
+send "cd /root/update_content\r"
+expect "\\$"
+send "tar zxf content.tar.gz\r"
+expect "\\$"
+send "./install\r"
+expect "\\$"
+send "cd ..\r"
+expect "\\$"
+send "rm -r /root/update_content\r"
+expect "\\$"
+send "sync\r"
+expect "\\$"
+send "exit\r"
+expect eof

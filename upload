@@ -1,0 +1,35 @@
+#!/usr/bin/expect --
+
+log_user 1
+
+set remote_ip   192.168.10.210
+set filename	content.tar.gz
+
+
+proc run_cmd {cmd} {
+    send "$cmd\r"
+    expect  {
+    	"Not connected."	{ exit -1 }	
+    	timeout 			{ exit -1 }
+    	"ftp>"				{ return 0 }
+    }	
+}
+
+spawn -noecho ftp $remote_ip 
+
+while {1} {
+	expect  {
+		"ame "		{ send "root\r" }
+		"assword:"	{ send "123456\r" }
+		"ftp>"      { break }
+		timeout		{ exit -1 }
+	}
+}
+
+run_cmd "mkdir /root/update_content"
+run_cmd "cd /root/update_content"
+run_cmd "binary"
+run_cmd "put $filename"
+run_cmd "bye"
+
+exit 0

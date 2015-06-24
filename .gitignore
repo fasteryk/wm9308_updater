@@ -1,0 +1,8 @@
+.cproject
+.project
+.settings
+*.o
+updater
+*.gz
+*.pkg
+
